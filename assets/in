@@ -45,7 +45,8 @@ clean_tags=$(jq -r '(.params.clean_tags // false)' < $payload)
 ssl_cacerts=$(jq -r '(.source.ssl_cacerts // "")' < $payload)
 
 if [ ! -z "$ssl_cacerts" ]; then
-    curl -o ~/cacerts.pem $ssl_cacerts
+    $dest_cacerts = $(echo "$git_config_payload" | jq '.source.git_config[] | select(.name == "http.sslCAInfo") | .value')
+    curl -o $dest_cacerts $ssl_cacerts
     if [ $? -ne 0 ]; then
         echo "invalid ssl cacerts url: $ssl_cacerts" >&2
         exit 1
