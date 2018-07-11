@@ -7,6 +7,8 @@ Tracks the commits in a [git](http://git-scm.com/) repository.
 
 * `uri`: *Required.* The location of the repository.
 
+* `ssl_cacerts`: *Optional.* URL to download your cacerts file. Useful when you have Intermediate CA.
+
 * `branch`: The branch to track. This is *optional* if the resource is
    only used in `get` steps; however, it is *required* when used in a `put` step. If unset for `get`, the repository's default branch is used; usually `master` but [could be different](https://help.github.com/articles/setting-the-default-branch/).
    
@@ -94,6 +96,7 @@ resources:
 - name: source-code
   type: git
   source:
+    ssl_cacerts: https://[my-url]/cacerts.pem
     uri: git@github.com:concourse/git-resource.git
     branch: master
     private_key: |
@@ -105,6 +108,8 @@ resources:
     git_config:
     - name: core.bigFileThreshold
       value: 10m
+    - name: http.sslCAInfo
+      value: ~/cacerts.pem
     disable_ci_skip: true
     git_crypt_key: AEdJVEN...snip...AAA==
     https_tunnel:

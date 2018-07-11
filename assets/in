@@ -42,6 +42,15 @@ commit_verification_keys=$(jq -r '(.source.commit_verification_keys // [])[]' < 
 gpg_keyserver=$(jq -r '.source.gpg_keyserver // "hkp://ipv4.pool.sks-keyservers.net/"' < $payload)
 disable_git_lfs=$(jq -r '(.params.disable_git_lfs // false)' < $payload)
 clean_tags=$(jq -r '(.params.clean_tags // false)' < $payload)
+ssl_cacerts=$(jq -r '(.source.ssl_cacerts // "")' < $payload)
+
+if [ ! -z "$ssl_cacerts" ]; then
+    curl -o ~/cacerts.pem $ssl_cacerts
+    if [ $? -ne 0 ]; then
+        echo "invalid ssl cacerts url: $ssl_cacerts" >&2
+        exit 1
+    fi
+fi
 
 configure_git_global "${git_config_payload}"
 
